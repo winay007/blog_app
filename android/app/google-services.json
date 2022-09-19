@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "629116940373",
+    "project_id": "blog-application-db027",
+    "storage_bucket": "blog-application-db027.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:629116940373:android:54993523c37e6c641764dc",
+        "android_client_info": {
+          "package_name": "com.revamph.blogApp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "629116940373-felkhvl9461e2t7i3d96rginnbfp15vr.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBL4ragxHkYL8uENZ3S2llbzZHcQNeQQvk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "629116940373-felkhvl9461e2t7i3d96rginnbfp15vr.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

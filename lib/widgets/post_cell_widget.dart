@@ -24,7 +24,7 @@ class PostCellWidget extends StatelessWidget {
               height: 75,
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(
+                child: Image.network(
                   image,
                   fit: BoxFit.cover,
                 ),

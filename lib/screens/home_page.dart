@@ -1,5 +1,8 @@
 import 'package:blog_minimal/screens/create_post.dart';
+import 'package:blog_minimal/screens/signup.dart';
 import 'package:blog_minimal/widgets/post_cell_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class Post {
@@ -12,41 +15,43 @@ class Post {
 }
 
 class HomePage extends StatelessWidget {
-  final data = [
-    Post(
-      image: 'assets/images/ikigai.jpg',
-      title: 'Finding your ikigai in your middle age',
-      author: 'John Johny',
-      date: '25 Mar 2020',
-    ),
-    Post(
-      image: 'assets/images/leader.jpg',
-      title: 'How to Lead Before You Are in Charge',
-      author: 'John Johny',
-      date: '24 Mar 2020',
-    ),
-    Post(
-      image: 'assets/images/minimal.jpg',
-      title: 'How Minimalism Brought Me',
-      author: 'John Johny',
-      date: '15 Mar 2020',
-    ),
-    Post(
-      image: 'assets/images/colors.jpg',
-      title: 'The Most Important Color In UI Design',
-      author: 'John Johny',
-      date: '11 Mar 2020',
-    ),
-    Post(
-      image: 'assets/images/leader.jpg',
-      title: 'How to Lead Before You Are in Charge',
-      author: 'John Johny',
-      date: '24 Mar 2020',
-    ),
-  ];
+  final _user = FirebaseAuth.instance.currentUser;
+  // final data = [
+  //   Post(
+  //     image: 'assets/images/ikigai.jpg',
+  //     title: 'Finding your ikigai in your middle age',
+  //     author: 'John Johny',
+  //     date: '25 Mar 2020',
+  //   ),
+  //   Post(
+  //     image: 'assets/images/leader.jpg',
+  //     title: 'How to Lead Before You Are in Charge',
+  //     author: 'John Johny',
+  //     date: '24 Mar 2020',
+  //   ),
+  //   Post(
+  //     image: 'assets/images/minimal.jpg',
+  //     title: 'How Minimalism Brought Me',
+  //     author: 'John Johny',
+  //     date: '15 Mar 2020',
+  //   ),
+  //   Post(
+  //     image: 'assets/images/colors.jpg',
+  //     title: 'The Most Important Color In UI Design',
+  //     author: 'John Johny',
+  //     date: '11 Mar 2020',
+  //   ),
+  //   Post(
+  //     image: 'assets/images/leader.jpg',
+  //     title: 'How to Lead Before You Are in Charge',
+  //     author: 'John Johny',
+  //     date: '24 Mar 2020',
+  //   ),
+  // ];
 
   @override
   Widget build(BuildContext context) {
+    print(_user.email);
     return Scaffold(
       backgroundColor: Colors.grey[100],
       resizeToAvoidBottomInset: false,
@@ -75,11 +80,18 @@ class HomePage extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.grey[200],
-                    child: Icon(
-                      Icons.notifications_outlined,
-                      color: Colors.grey,
+                  GestureDetector(
+                    onTap: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushReplacement(context,
+                          MaterialPageRoute(builder: (context) => SignUp()));
+                    },
+                    child: CircleAvatar(
+                      backgroundColor: Colors.grey[200],
+                      child: Icon(
+                        Icons.notifications_outlined,
+                        color: Colors.grey,
+                      ),
                     ),
                   ),
                   Positioned(
@@ -101,7 +113,10 @@ class HomePage extends StatelessWidget {
         child: Icon(Icons.add),
         backgroundColor: Color(0xFFFFD810),
         elevation: 0,
-        onPressed: () => null,
+        onPressed: () {
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => CreatePost()));
+        },
       ),
       body: SafeArea(
         minimum: const EdgeInsets.all(16),
@@ -140,26 +155,40 @@ class HomePage extends StatelessWidget {
                     height: 20,
                   ),
                   Container(
-                    child: ListView.separated(
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: data.length,
-                      shrinkWrap: true,
-                      itemBuilder: (context, index) {
-                        final post = data[index];
-                        return Card(
-                          child: Container(
-                            padding: EdgeInsets.all(10),
-                            child: PostCellWidget(
-                                title: post.title,
-                                image: post.image,
-                                author: post.author,
-                                date: post.date,
-                                onClick: () => null),
-                          ),
-                        );
-                      },
-                      separatorBuilder: (context, index) => Divider(),
-                    ),
+                    //retreving from firestore
+                    child: StreamBuilder(
+                        stream: FirebaseFirestore.instance
+                            .collection('blogs')
+                            .snapshots(),
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            final List<DocumentSnapshot> data =
+                                snapshot.data.docs;
+                            return ListView.separated(
+                              physics: NeverScrollableScrollPhysics(),
+                              itemCount: data.length,
+                              shrinkWrap: true,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                  child: Container(
+                                    padding: EdgeInsets.all(10),
+                                    child: PostCellWidget(
+                                        title: data[index]['title'],
+                                        image: data[index]['imageUrl'],
+                                        // image: 'assets/images/ikigai.jpg',
+                                        author: data[index]['publisher'],
+                                        date: data[index]['date'],
+                                        onClick: () => null),
+                                  ),
+                                );
+                              },
+                              separatorBuilder: (context, index) => Divider(),
+                            );
+                          }
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }),
                   ),
                   const SizedBox(
                     height: 20,

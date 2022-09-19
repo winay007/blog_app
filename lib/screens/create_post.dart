@@ -42,7 +42,7 @@ class _CreatePostState extends State<CreatePost> {
         final author = user['username'];
 
         final ref = FirebaseStorage.instance
-            .ref('user_images/');
+            .ref('user_images/${Timestamp.now().toString()}');
 
         await ref.putFile(image);
 

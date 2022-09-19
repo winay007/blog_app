@@ -1,3 +1,4 @@
+import 'package:blog_minimal/screens/blog_overview_page.dart';
 import 'package:blog_minimal/screens/create_post.dart';
 import 'package:blog_minimal/screens/signup.dart';
 import 'package:blog_minimal/widgets/post_cell_widget.dart';
@@ -5,14 +6,14 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class Post {
-  final String title;
-  final String image;
-  final String author;
-  final String date;
+// class Post {
+//   final String title;
+//   final String image;
+//   final String author;
+//   final String date;
 
-  Post({this.title, this.image, this.author, this.date});
-}
+//   Post({this.title, this.image, this.author, this.date});
+// }
 
 class HomePage extends StatelessWidget {
   final _user = FirebaseAuth.instance.currentUser;
@@ -173,12 +174,23 @@ class HomePage extends StatelessWidget {
                                   child: Container(
                                     padding: EdgeInsets.all(10),
                                     child: PostCellWidget(
-                                        title: data[index]['title'],
-                                        image: data[index]['imageUrl'],
-                                        // image: 'assets/images/ikigai.jpg',
-                                        author: data[index]['publisher'],
-                                        date: data[index]['date'],
-                                        onClick: () => null),
+                                      title: data[index]['title'],
+                                      image: data[index]['imageUrl'],
+                                      author: data[index]['publisher'],
+                                      date: data[index]['date'],
+                                      onClick: () => Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (ctx) => BlogOverview(
+                                            title: data[index]['title'],
+                                            imageUrl: data[index]['imageUrl'],
+                                            author: data[index]['publisher'],
+                                            date: data[index]['date'],
+                                            content: data[index]['content'],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
                                   ),
                                 );
                               },
